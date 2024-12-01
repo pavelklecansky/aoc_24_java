@@ -66,7 +66,6 @@ public class App {
      * method to your Day.
      * <p>
      * For example, you could add this to Day01.java:
-     *
      * <code><pre>
      * public static void main(String[] args) {
      *   App.runPart1ForDay(1);
@@ -85,7 +84,6 @@ public class App {
      * method to your Day.
      * <p>
      * For example, you could add this to Day01.java:
-     *
      * <code><pre>
      * public static void main(String[] args) {
      *   App.runPart2ForDay(1);
@@ -200,12 +198,7 @@ public class App {
         String url = String.format("https://adventofcode.com/%d/day/%d/input", year, day);
         System.out.println("Downloading " + url);
 
-        URI uri;
-        try {
-            uri = new URI(url);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        URI uri = URI.create(url);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
@@ -213,10 +206,8 @@ public class App {
                 .header("user-agent", "advent-of-code starter")
                 .build();
 
-        HttpClient client = HttpClient.newHttpClient();
-
         HttpResponse<String> response;
-        try {
+        try(HttpClient client = HttpClient.newHttpClient()) {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
@@ -279,7 +270,7 @@ public class App {
      */
     private static int intOrDie(String numeric) {
         try {
-            return Integer.valueOf(numeric);
+            return Integer.parseInt(numeric);
         } catch (NumberFormatException e) {
             System.out.println("The argument '" + numeric + "' could not be interpreted as an integer number.");
             System.exit(1);
@@ -297,14 +288,14 @@ public class App {
      * @param day The day number
      * @return An instance of the Day implementation for the given day (e.g. Day01.class for day = 1)
      */
-    private static Day getDayInstance(int day) {
+    private static Day<?> getDayInstance(int day) {
         String dayClassName = String.format("aoc.day%02d.Day%02d", day, day);
         try {
             Class<?> dayClass = Class.forName(dayClassName);
             if (!Day.class.isAssignableFrom(dayClass)) {
                 throw new IllegalArgumentException(dayClassName + " does not implement aoc.Day");
             }
-            return (Day) dayClass.getDeclaredConstructor().newInstance();
+            return (Day<?>) dayClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to load " + dayClassName

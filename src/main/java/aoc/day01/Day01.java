@@ -2,7 +2,6 @@ package aoc.day01;
 
 import aoc.Day;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -18,7 +17,7 @@ public class Day01 implements Day<Integer> {
 
         return IntStream
                 .range(0, listTuple.minListSize())
-                .map(i -> Math.abs(listTuple.first().get(i) - listTuple.second.get(i)))
+                .map(i -> Math.abs(listTuple.first().get(i) - listTuple.second().get(i)))
                 .sum();
     }
 
